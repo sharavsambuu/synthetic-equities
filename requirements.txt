@@ -1,0 +1,13 @@
+pandas
+numpy
+matplotlib
+jupyter
+scikit-learn
+python-binance
+websocket-client
+statsmodels
+pyfolio
+backtesting
+xgboost
+seaborn
+lightgbm
