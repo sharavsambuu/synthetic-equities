@@ -11,3 +11,4 @@ backtesting
 xgboost
 seaborn
 lightgbm
+ccxt
