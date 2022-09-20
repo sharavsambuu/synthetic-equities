@@ -175,12 +175,26 @@ series_len    = 1500
 series_df = pd.DataFrame()
 series_df['val'] = gbm(fitted_mu, fitted_sigma, x0, series_len, dt)
 
-series_df['val'].plot()
+#series_df['val'].plot()
 
+# OHLCV conversion
 
-#%%
+timeframe = 5
+df_ = pd.DataFrame()
+df_['price'] = series_df['val']
 
-#%%
+start_dt = datetime.strptime("12/1/2020 11:12:00.000000", "%d/%m/%Y %H:%M:%S.%f")
+df_['datetime'] = [pd.to_datetime(start_dt+pd.DateOffset(minutes=offset)) for offset in range(0, len(df_))]
+
+df_ = df_.set_index(pd.DatetimeIndex(df_['datetime']))
+df_ = df_.drop(['datetime'], axis=1)
+
+df_xm = df_['price'].resample(f"{timeframe}Min").ohlc()
+df_xm['Volume'] = 1.0 + np.random.sample(len(df_xm)) * 15
+df_xm = df_xm.rename(columns={"open": "Open", "high": "High", "low":"Low", "close":"Close"})
+
+plot_len = 70
+mpf.plot(df_xm.iloc[-plot_len:], type='candle', style='yahoo', volume=True)
 
 
 #%%
