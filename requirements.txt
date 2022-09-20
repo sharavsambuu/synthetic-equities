@@ -12,3 +12,4 @@ xgboost
 seaborn
 lightgbm
 ccxt
+mplfinance
