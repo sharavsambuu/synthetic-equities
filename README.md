@@ -19,3 +19,4 @@
 # Resources and references
 
     - https://github.com/ydataai/ydata-synthetic
+    - https://www.investopedia.com/articles/07/montecarlo.asp

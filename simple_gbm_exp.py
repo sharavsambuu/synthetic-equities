@@ -15,7 +15,7 @@ warnings.filterwarnings('ignore')
 mu          = 0.001
 sigma       = 0.01
 start_price = 10
-size        = 300
+size        = 100
 timeframe   = 5
 
 returns = np.random.normal(loc=mu, scale=sigma, size=size)
@@ -31,14 +31,16 @@ df = df.set_index(pd.DatetimeIndex(df['datetime']))
 df = df.drop(['datetime'], axis=1)
 
 df_xm = df['price'].resample(f"{timeframe}Min").ohlc()
+df_xm['Volume'] = 1.0 + np.random.sample(len(df_xm)) * 15
 df_xm = df_xm.rename(columns={"open": "Open", "high": "High", "low":"Low", "close":"Close"})
 
-mpf.plot(df_xm, type='candle', style='yahoo')
+mpf.plot(df_xm, type='candle', style='yahoo', volume=True)
 
 
 #%%
 
 #%%
+df_xm['Close'].hist(bins=160)
 
 #%%
 
