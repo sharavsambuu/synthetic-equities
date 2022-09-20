@@ -12,10 +12,10 @@ warnings.filterwarnings('ignore')
 
 
 #%%
-mu          = 0.001
-sigma       = 0.01
-start_price = 10
-size        = 100
+mu          = 0.025
+sigma       = 0.123
+start_price = 1000
+size        = 300
 timeframe   = 5
 
 returns = np.random.normal(loc=mu, scale=sigma, size=size)
