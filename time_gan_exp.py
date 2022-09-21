@@ -1,4 +1,5 @@
 #%%
+import random
 from   os                import path
 from   datetime          import datetime
 import pandas            as pd
@@ -6,33 +7,12 @@ import numpy             as np
 import matplotlib.pyplot as plt
 import mplfinance        as mpf
 
-from ydata_synthetic.synthesizers                   import ModelParameters
-from ydata_synthetic.preprocessing.timeseries       import processed_stock
-from ydata_synthetic.preprocessing.timeseries.utils import real_data_loading
-from ydata_synthetic.synthesizers.timeseries        import TimeGAN
+from sklearn.preprocessing                    import MinMaxScaler
+from ydata_synthetic.synthesizers             import ModelParameters
+from ydata_synthetic.preprocessing.timeseries import processed_stock
+from ydata_synthetic.synthesizers.timeseries  import TimeGAN
 
-
-#%%
-
-
-#%%
-#Specific to TimeGANs
-seq_len       = 24
-n_seq         = 5  # ohlcv
-hidden_dim    = 24
-gamma         = 1
-
-noise_dim     = 32
-dim           = 128
-batch_size    = 128
-
-log_step      = 100
-learning_rate = 5e-4
-
-gan_args = ModelParameters(batch_size = batch_size,
-                           lr         = learning_rate,
-                           noise_dim  = noise_dim,
-                           layers_dim = dim)
+#np.random.seed(0)
 
 #%%
 
@@ -48,11 +28,90 @@ df
 
 #%%
 
-#%%
-temp_data      = df.iloc[-200:].values
-temp_processed = real_data_loading(data=temp_data, seq_len=seq_len)
 
-temp_processed
+#%%
+def real_data_loading(data: np.array, seq_len):
+    ori_data = data[::-1]
+    scaler   = MinMaxScaler().fit(ori_data)
+    ori_data = scaler.transform(ori_data)
+
+    # Preprocess the dataset
+    temp_data = []
+    # Cut data by sequence length
+    for i in range(0, len(ori_data) - seq_len):
+        _x = ori_data[i:i + seq_len]
+        temp_data.append(_x)
+
+    # Mix the datasets (to make it similar to i.i.d)
+    idx = np.random.permutation(len(temp_data))
+    data = []
+    for i in range(len(temp_data)):
+        data.append(temp_data[idx[i]])
+
+    return data, scaler
+
+
+#%%
+seq_len = 300
+
+temp_processed, data_scaler = real_data_loading(data=df.values, seq_len=seq_len)
+
+#%%
+data_scaler
+
+#%%
+temp_processed[0].shape
+
+#%%
+processed_size = len(temp_processed)
+
+processed_size
+
+#%%
+train_samples_size = 100000
+random_numbers     = random.sample(range(0, processed_size), train_samples_size)
+selected_indexes   = list(dict.fromkeys(random_numbers))
+
+len(selected_indexes)
+
+#%%
+print(list(selected_indexes[:10]))
+
+#%%
+from tqdm import tqdm
+
+#%%
+downsampled_dataset = []
+
+for idx in tqdm(selected_indexes):
+    downsampled_dataset.append(temp_processed[idx])
+
+#%%
+len(downsampled_dataset), downsampled_dataset[0].shape
+
+#%%
+
+
+#%%
+
+
+#%%
+#Specific to TimeGANs
+n_feature     = 5  # ohlcv
+hidden_dim    = 24
+gamma         = 1
+
+noise_dim     = 32
+dim           = 128
+batch_size    = 256 #128
+
+log_step      = 100
+learning_rate = 5e-4
+
+gan_args = ModelParameters(batch_size = batch_size,
+                           lr         = learning_rate,
+                           noise_dim  = noise_dim,
+                           layers_dim = dim)
 
 #%%
 
@@ -61,8 +120,8 @@ temp_processed
 if path.exists('synthesizer_stock.pkl'):
     synth = TimeGAN.load('synthesizer_stock.pkl')
 else:
-    synth = TimeGAN(model_parameters=gan_args, hidden_dim=24, seq_len=seq_len, n_seq=n_seq, gamma=1)
-    synth.train(temp_processed, train_steps=500)
+    synth = TimeGAN(model_parameters=gan_args, hidden_dim=24, seq_len=seq_len, n_seq=n_feature, gamma=1)
+    synth.train(downsampled_dataset, train_steps=10000)
     synth.save('synthesizer_stock.pkl')
 
 
