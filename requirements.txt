@@ -1,6 +1,9 @@
-pandas
-numpy
-matplotlib
+setuptools==60.9.0
+protobuf==3.9.2
+ydata-synthetic
+#pandas
+#numpy
+#matplotlib
 jupyter
 scikit-learn
 python-binance
