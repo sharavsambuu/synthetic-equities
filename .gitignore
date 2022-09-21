@@ -131,3 +131,7 @@ dmypy.json
 binance_config.ini
 
 data/
+
+synthesizer_stock.pkl
+
+
