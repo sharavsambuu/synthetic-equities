@@ -30,10 +30,18 @@ df['Close'].hist(bins=150)
 
 
 #%%
-size = 50000
-temp_df = df.iloc[-size:]
+df['Close'].plot()
 
-temp_df
+
+#%%
+
+
+#%%
+#size = 50000
+#temp_df = df.iloc[-size:]
+temp_df = df
+
+#temp_df
 
 #%%
 temp_df['Close'].plot()
@@ -146,9 +154,9 @@ len(log_series)
 
 
 #%%
-temp_df = df.iloc[-50000:]
+#temp_df = df.iloc[-50000:]
 
-n = 1000 # group size
+n = 10000 # group size
 m = 300  # overlap size
 
 s     = [np.log(temp_df['Close'].iloc[i:i+n]) for i in range(0, len(temp_df), n-m)]
@@ -193,8 +201,8 @@ df_xm = df_['price'].resample(f"{timeframe}Min").ohlc()
 df_xm['Volume'] = 1.0 + np.random.sample(len(df_xm)) * 15
 df_xm = df_xm.rename(columns={"open": "Open", "high": "High", "low":"Low", "close":"Close"})
 
-plot_len = 70
-mpf.plot(df_xm.iloc[-plot_len:], type='candle', style='yahoo', volume=True)
+plot_len = 1700
+mpf.plot(df_xm.iloc[-plot_len:], type='candle', style='yahoo', volume=False)
 
 
 #%%
@@ -204,10 +212,38 @@ mpf.plot(df_xm.iloc[-plot_len:], type='candle', style='yahoo', volume=True)
 
 
 #%%
+x0            = 18870    # initial price
+fitted_mu     = avgs[0]
+fitted_sigma  = avgs[2]
+series_len    = 1500     # approx. 1 day
+simulation_n  = 1000
+mc_paths      = []
+start_dt      = datetime.strptime("21/9/2022 08:55:00.000000", "%d/%m/%Y %H:%M:%S.%f")
+
+
+for _ in range(0, simulation_n):
+    series_df = pd.DataFrame()
+    series_df['val'] = gbm(fitted_mu, fitted_sigma, x0, series_len, dt)
+    timeframe = 5
+    df_ = pd.DataFrame()
+    df_['price'] = series_df['val']
+
+    df_['datetime'] = [pd.to_datetime(start_dt+pd.DateOffset(minutes=offset)) for offset in range(0, len(df_))]
+
+    df_ = df_.set_index(pd.DatetimeIndex(df_['datetime']))
+    df_ = df_.drop(['datetime'], axis=1)
+
+    df_xm = df_['price'].resample(f"{timeframe}Min").ohlc()
+    df_xm['Volume'] = 1.0 + np.random.sample(len(df_xm)) * 15
+    df_xm = df_xm.rename(columns={"open": "Open", "high": "High", "low":"Low", "close":"Close"})
+
+    mc_paths.append(df_xm['Close'])
 
 
 #%%
-
+f, axs = plt.subplots(1, figsize=(20,15))
+for series in mc_paths:
+    axs.plot(series)
 
 #%%
 
