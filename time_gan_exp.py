@@ -20,14 +20,29 @@ from ydata_synthetic.synthesizers.timeseries  import TimeGAN
 #%%
 asset = "btcusdt".upper()
 
-df = pd.read_csv(f"./data/{asset}/{asset}-1m.csv", parse_dates=True, index_col="timestamp")
-df = df.rename(columns={"op": "Open", "hi": "High", "lo":"Low", "cl":"Close", "volume": "Volume"})
+dollar_amount = 120000000
+df = pd.read_csv(f"./data/{asset}/{asset}-dollarbar-{int(dollar_amount)}.csv", parse_dates=True, index_col="timestamp")
 
 df
 
 
 #%%
+df['Volume'].plot()
 
+#%%
+df['Dollar'].plot()
+
+#%%
+df['dt'     ] = pd.to_datetime(df.index,  unit='s', origin='unix').astype(np.int64)
+df['dt_diff'] = df['dt'] - df['dt'].shift(1)
+
+#%%
+df['dt_diff'].plot()
+
+#%%
+df.dropna(inplace=True)
+
+df
 
 #%%
 def real_data_loading(data: np.array, seq_len):
@@ -54,7 +69,9 @@ def real_data_loading(data: np.array, seq_len):
 #%%
 seq_len = 300
 
-temp_processed, data_scaler = real_data_loading(data=df.values, seq_len=seq_len)
+columns = ['Open', 'High', 'Low', 'Close', 'Volume', 'dt_diff']
+temp_processed, data_scaler = real_data_loading(data=df[columns].values, seq_len=seq_len)
+
 
 #%%
 data_scaler
@@ -63,33 +80,51 @@ data_scaler
 temp_processed[0].shape
 
 #%%
-processed_size = len(temp_processed)
+#processed_size = len(temp_processed)
 
-processed_size
-
-#%%
-train_samples_size = 100 #100000
-random_numbers     = random.sample(range(0, processed_size), train_samples_size)
-selected_indexes   = list(dict.fromkeys(random_numbers))
-
-len(selected_indexes)
+#processed_size
 
 #%%
-print(list(selected_indexes[:10]))
+#train_samples_size = 100 
+#random_numbers     = random.sample(range(0, processed_size), train_samples_size)
+#selected_indexes   = list(dict.fromkeys(random_numbers))
+
+#len(selected_indexes)
 
 #%%
-from tqdm import tqdm
+#print(list(selected_indexes[:10]))
 
 #%%
-downsampled_dataset = []
-
-for idx in tqdm(selected_indexes):
-    downsampled_dataset.append(temp_processed[idx])
+#from tqdm import tqdm
 
 #%%
-len(downsampled_dataset), downsampled_dataset[0].shape
+#downsampled_dataset = []
+
+#for idx in tqdm(selected_indexes):
+#    downsampled_dataset.append(temp_processed[idx])
 
 #%%
+#len(downsampled_dataset), downsampled_dataset[0].shape
+
+#%%
+
+
+#%%
+# Real Dollar Bars
+random_idx    = np.random.randint(len(temp_processed))
+
+scaled_data   = temp_processed[random_idx]
+descaled_data = data_scaler.inverse_transform(scaled_data)
+
+temp_df = pd.DataFrame(descaled_data[:80], columns=['Open', 'High', 'Low', 'Close', 'Volume', 'Diff'])
+
+start_dt = datetime.strptime("6/8/2022 15:04:00.000000", "%d/%m/%Y %H:%M:%S.%f")
+temp_df['datetime'] = [pd.to_datetime(start_dt+pd.DateOffset(minutes=offset)) for offset in range(0, len(temp_df))]
+
+temp_df = temp_df.set_index(pd.DatetimeIndex(temp_df['datetime']))
+temp_df = temp_df.drop(['datetime'], axis=1)
+
+mpf.plot(temp_df, type='candle', style='yahoo', volume=True)
 
 
 #%%
@@ -97,7 +132,8 @@ len(downsampled_dataset), downsampled_dataset[0].shape
 
 #%%
 #Specific to TimeGANs
-n_feature     = 5  # ohlcv
+
+n_feature     = 6  # ohlcvd
 hidden_dim    = 24
 gamma         = 1
 
@@ -121,7 +157,7 @@ if path.exists('synthesizer_stock.pkl'):
     synth = TimeGAN.load('synthesizer_stock.pkl')
 else:
     synth = TimeGAN(model_parameters=gan_args, hidden_dim=24, seq_len=seq_len, n_seq=n_feature, gamma=1)
-    synth.train(downsampled_dataset, train_steps=400)
+    synth.train(temp_processed, train_steps=500)
     synth.save('synthesizer_stock.pkl')
 
 
@@ -141,6 +177,7 @@ synthetic_data.shape
 
 
 #%%
+# Chart in scaled form
 random_idx = np.random.randint(10)
 scaled_data = synthetic_data[random_idx]
 temp_df = pd.DataFrame(scaled_data[:50], columns=['Open', 'High', 'Low', 'Close', 'Volume'])
