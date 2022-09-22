@@ -11,9 +11,10 @@
     pip install TA-lib --no-binary TA-lib
 
 
-# Download historical data
+# Download historical data and generate dollar bars
 
     python download_asset.py btcusdt 1
+    python generate_dollar_bar.py btcusdt 120000000
 
 
 # Resources and references
