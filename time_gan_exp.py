@@ -166,7 +166,7 @@ random_idx    = np.random.randint(10)
 scaled_data   = synthetic_data[random_idx]
 descaled_data = data_scaler.inverse_transform(scaled_data)
 
-temp_df = pd.DataFrame(descaled_data[:50], columns=['Open', 'High', 'Low', 'Close', 'Volume'])
+temp_df = pd.DataFrame(descaled_data[:200], columns=['Open', 'High', 'Low', 'Close', 'Volume'])
 
 start_dt = datetime.strptime("6/8/2022 15:04:00.000000", "%d/%m/%Y %H:%M:%S.%f")
 temp_df['datetime'] = [pd.to_datetime(start_dt+pd.DateOffset(minutes=offset)) for offset in range(0, len(temp_df))]
