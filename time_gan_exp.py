@@ -68,7 +68,7 @@ processed_size = len(temp_processed)
 processed_size
 
 #%%
-train_samples_size = 100000
+train_samples_size = 100 #100000
 random_numbers     = random.sample(range(0, processed_size), train_samples_size)
 selected_indexes   = list(dict.fromkeys(random_numbers))
 
@@ -103,7 +103,7 @@ gamma         = 1
 
 noise_dim     = 32
 dim           = 128
-batch_size    = 256 #128
+batch_size    = 128
 
 log_step      = 100
 learning_rate = 5e-4
@@ -121,7 +121,7 @@ if path.exists('synthesizer_stock.pkl'):
     synth = TimeGAN.load('synthesizer_stock.pkl')
 else:
     synth = TimeGAN(model_parameters=gan_args, hidden_dim=24, seq_len=seq_len, n_seq=n_feature, gamma=1)
-    synth.train(downsampled_dataset, train_steps=10000)
+    synth.train(downsampled_dataset, train_steps=400)
     synth.save('synthesizer_stock.pkl')
 
 
@@ -141,8 +141,9 @@ synthetic_data.shape
 
 
 #%%
-random_idx = np.random.randint(len(synthetic_data))
-temp_df = pd.DataFrame(synthetic_data[random_idx], columns=['Open', 'High', 'Low', 'Close', 'Volume'])
+random_idx = np.random.randint(10)
+scaled_data = synthetic_data[random_idx]
+temp_df = pd.DataFrame(scaled_data[:50], columns=['Open', 'High', 'Low', 'Close', 'Volume'])
 
 start_dt = datetime.strptime("6/8/2022 15:04:00.000000", "%d/%m/%Y %H:%M:%S.%f")
 temp_df['datetime'] = [pd.to_datetime(start_dt+pd.DateOffset(minutes=offset)) for offset in range(0, len(temp_df))]
@@ -160,6 +161,21 @@ mpf.plot(temp_df, type='candle', style='yahoo', volume=True)
 
 
 #%%
+# Descaled chart
+random_idx    = np.random.randint(10)
+scaled_data   = synthetic_data[random_idx]
+descaled_data = data_scaler.inverse_transform(scaled_data)
+
+temp_df = pd.DataFrame(descaled_data[:50], columns=['Open', 'High', 'Low', 'Close', 'Volume'])
+
+start_dt = datetime.strptime("6/8/2022 15:04:00.000000", "%d/%m/%Y %H:%M:%S.%f")
+temp_df['datetime'] = [pd.to_datetime(start_dt+pd.DateOffset(minutes=offset)) for offset in range(0, len(temp_df))]
+
+temp_df = temp_df.set_index(pd.DatetimeIndex(temp_df['datetime']))
+temp_df = temp_df.drop(['datetime'], axis=1)
+
+mpf.plot(temp_df, type='candle', style='yahoo', volume=True)
+
 
 
 #%%
