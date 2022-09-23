@@ -67,7 +67,7 @@ def real_data_loading(data: np.array, seq_len):
 
 
 #%%
-seq_len = 300
+seq_len = 500
 
 columns = ['Open', 'High', 'Low', 'Close', 'Volume', 'dt_diff']
 temp_processed, data_scaler = real_data_loading(data=df[columns].values, seq_len=seq_len)
@@ -133,12 +133,12 @@ mpf.plot(temp_df, type='candle', style='yahoo', volume=True)
 #%%
 #Specific to TimeGANs
 
-n_feature     = 6  # ohlcvd
-hidden_dim    = 24
+n_feature     = 6   # ohlcvd
+hidden_dim    = 48
 gamma         = 1
 
 noise_dim     = 32
-dim           = 128
+dim           = 2568
 batch_size    = 128
 
 log_step      = 100
@@ -157,7 +157,7 @@ if path.exists('synthesizer_stock.pkl'):
     synth = TimeGAN.load('synthesizer_stock.pkl')
 else:
     synth = TimeGAN(model_parameters=gan_args, hidden_dim=24, seq_len=seq_len, n_seq=n_feature, gamma=1)
-    synth.train(temp_processed, train_steps=500)
+    synth.train(temp_processed, train_steps=10000)
     synth.save('synthesizer_stock.pkl')
 
 
