@@ -1,6 +1,31 @@
 # synthetic-prices
 
-    Synthetic time series generation
+    Synthetic financial time series generation for the Monte-Carlo simulation
+
+
+
+# Todos
+
+    Implement Geometric Brownian Motion as baseline, 30minute timeframe from 1minute intrady 
+
+    Implement Stochastic Volatility Models to tackle one of the shortcomings of GBM, allows
+    to model time varying feature of volatility of the prices
+        - implement Heston
+        - implement SABR
+
+    Implement Jump Diffusion Model for modelling sudden events and news
+        - Merton Jump Diffusion
+        - Kou Jump Diffusion
+
+    Generate backtestable multiple scenarios from selected models
+    
+    Implement simple trading rule based on RSI or other indicators
+        - backtest on multiple MC paths
+        - Extract PSR, DSR, SR metrics from MC paths
+
+
+    
+
 
 
 # steps to install some stuffs
