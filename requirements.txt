@@ -1,9 +1,6 @@
 setuptools==60.9.0
 protobuf==3.9.2
 ydata-synthetic
-#pandas
-#numpy
-#matplotlib
 jupyter
 scikit-learn
 python-binance
@@ -16,3 +13,6 @@ seaborn
 lightgbm
 ccxt
 mplfinance
+pandas==1.5.2
+#numpy
+#matplotlib
