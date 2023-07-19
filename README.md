@@ -36,6 +36,11 @@
     pip install TA-lib --no-binary TA-lib
 
 
+# run some streamlit based stuffs
+
+    streamlit run monte_carlo_equity_streamlit.py
+
+
 # Download historical data and generate dollar bars
 
     python download_asset.py btcusdt 1
