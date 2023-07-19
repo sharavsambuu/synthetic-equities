@@ -9,8 +9,18 @@ from   backtesting       import Backtest, Strategy
 from   multiprocessing   import Pool
 
 
+def mc_equity(params):
+    pct_changes = params[0]
+    return None
 
-def simulate_equity_mc():
+
+def simulate_equity_mc(df, num_simulations):
+    params = [(df['pct_change']) for _ in range(0, num_simulations)]
+    pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
+    result_list = pool.map(mc_equity, params)
+    pool.close()
+    pool.join()
+    print(result_list)
     pass
 
 
@@ -41,8 +51,11 @@ def generate_equity(start_date, end_date, num_trades, initial_cash):
     stats_df['Max Drawdown' ] = [max_drawdown ]
     st.dataframe(stats_df)
 
+    col11, _, _ = st.columns(3)
+    with col11:
+        num_simulations = st.number_input("N Simulations", min_value=10, step=1, value=50)
     if st.button("MC Simulate Equity"):
-        simulate_equity_mc()
+        simulate_equity_mc(df, num_simulations)
 
 
 
