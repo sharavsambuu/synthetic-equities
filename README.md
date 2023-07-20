@@ -9,6 +9,8 @@
 
     DONE Define drawdown percentage to be considered as ruined
     DONE Generate Monte Carlo paths and calculate probability of risk of ruining
+    Extract Probabilistic Sharpe Ratio from each simulation
+    Extract Deflated Sharpe Ratio from all simulation
 
     Generate 1 and 2 sigma probability cones for some confidence threshold
 
