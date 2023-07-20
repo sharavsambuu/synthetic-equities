@@ -62,8 +62,14 @@ def generate_equity(start_date, end_date, num_trades, initial_cash):
     df['cumret' ] = df['pct_change'].cumsum()
     df['cash'] = (1+df['pct_change']).cumprod()*initial_cash
 
+    df['max_cash'] = df['cash'].cummax()
+    df['is_max'  ] = df['cash'] == df['max_cash']
+    higher_high_df = df[df['is_max']==True].copy()
+    higher_high_df['s'] = 100
+
     fig, ax = plt.subplots()
     ax.plot(df['cash'])
+    ax.scatter(higher_high_df.index, higher_high_df['cash'], color='green', s=higher_high_df['s'])
     st.pyplot(fig)
 
     sharpe_ratio  = qs.stats.sharpe       (df['pct_change'])
