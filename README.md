@@ -49,6 +49,8 @@
 
 # Resources and references
 
+    - How to detect when a strategy is failing - Kevin Davey, Better System Trader
+        https://www.youtube.com/watch?v=_dMbZfALIAQ
     - https://github.com/ydataai/ydata-synthetic
     - https://www.investopedia.com/articles/07/montecarlo.asp
     - https://towardsdatascience.com/simulating-stock-prices-in-python-using-geometric-brownian-motion-8dfd6e8c6b18 
