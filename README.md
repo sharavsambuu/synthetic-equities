@@ -38,7 +38,7 @@
 
 # run some streamlit based stuffs
 
-    streamlit run monte_carlo_equity_streamlit.py
+    streamlit run monte_carlo_equity_streamlit_single.py
 
 
 # Download historical data and generate dollar bars
@@ -58,3 +58,7 @@
     - https://colab.research.google.com/github/ydataai/ydata-synthetic/blob/master/examples/timeseries/TimeGAN_Synthetic_stock_data.ipynb
 
 
+
+# Screenshots
+
+    ![Screenshot of MC Equity](pictures/mc_equity_01.png)
