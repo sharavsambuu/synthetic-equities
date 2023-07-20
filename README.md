@@ -1,6 +1,7 @@
 # synthetic-prices
 
     Synthetic financial time series generation for the Monte-Carlo simulation
+    https://synthetic-prices-q8eu1icg3.streamlit.app/ 
 
 
 
