@@ -10,23 +10,49 @@ from   multiprocessing   import Pool
 
 
 def mc_equity(params):
-    pct_changes = params[0]
-    return None
+    orig_changes = params
+    returns = np.zeros((orig_changes.shape[0],), dtype=float)
+    for i in range(0, orig_changes.shape[0]):
+        returns[i] = np.random.choice(orig_changes)
+    return returns
 
 
-def simulate_equity_mc(df, num_simulations):
-    params = [(df['pct_change']) for _ in range(0, num_simulations)]
+def simulate_equity_mc(df, num_simulations, initial_cash):
+    params = [(df['pct_change'].values.astype(float)) for _ in range(0, num_simulations)]
     pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
     result_list = pool.map(mc_equity, params)
     pool.close()
     pool.join()
-    print(result_list)
+
+    sim_df = df.copy()
+
+    df_list = []
+    for idx in range(0, len(result_list)):
+        temp_df = pd.DataFrame(index=df.index)
+        temp_df['pct_change'] = result_list[idx]
+        temp_df['cash'      ] = (1+temp_df['pct_change']).cumprod()*initial_cash
+        sim_df[f"cash{idx}" ] = temp_df['cash']
+        df_list.append(temp_df)
+
+    sim_cols = [col_name for col_name in sim_df.columns if col_name.startswith("cash")]
+    fig, ax = plt.subplots()
+    for col_name in sim_cols:
+        ax.plot(sim_df[col_name])
+    st.pyplot(fig)
+
+    stats_df = pd.DataFrame()
+    stats_df['Equity'       ] = [round(df_.iloc[-1]['cash'],0) for df_ in df_list]
+    stats_df['Sharpe Ratio' ] = [qs.stats.sharpe       (df_['pct_change']) for df_ in df_list]
+    stats_df['Profit Factor'] = [qs.stats.profit_factor(df_['pct_change']) for df_ in df_list]
+    stats_df['Max Drawdown' ] = [qs.stats.max_drawdown (df_['pct_change']) for df_ in df_list]
+    st.dataframe(stats_df)
+
     pass
 
 
 def generate_equity(start_date, end_date, num_trades, initial_cash):
     trade_dates = pd.to_datetime(np.sort(np.random.choice(pd.date_range(start=start_date, end=end_date, periods=num_trades + 1), num_trades, replace=False)))
-    percentage_changes = np.random.uniform(-0.043, 0.045, num_trades)
+    percentage_changes = np.random.uniform(-0.043, 0.045, num_trades).astype(float)
     df = pd.DataFrame({
         'datetime'  : trade_dates,
         'pct_change': percentage_changes,
@@ -54,8 +80,8 @@ def generate_equity(start_date, end_date, num_trades, initial_cash):
     col11, _, _ = st.columns(3)
     with col11:
         num_simulations = st.number_input("N Simulations", min_value=10, step=1, value=50)
-    if st.button("MC Simulate Equity"):
-        simulate_equity_mc(df, num_simulations)
+
+    simulate_equity_mc(df, num_simulations, initial_cash)
 
 
 
