@@ -9,11 +9,11 @@
 
     DONE Define drawdown percentage to be considered as ruined
     DONE Generate Monte Carlo paths and calculate probability of risk of ruining
-    Extract Probabilistic Sharpe Ratio from each simulation
-    Extract Deflated Sharpe Ratio from all simulation
+    DONE Extract Probabilistic Sharpe Ratio from each simulation
+    DONE Extract Deflated Sharpe Ratio from all simulation
+
 
     Generate 1 and 2 sigma probability cones for some confidence threshold
-
 
 
     Implement Geometric Brownian Motion as baseline, 30minute timeframe from 1minute intrady 
@@ -81,4 +81,4 @@
 
 # Screenshots
 
-![Screenshot of MC Equity](https://raw.githubusercontent.com/sharavsambuu/synthetic-prices/main/pictures/mc_equity_02.png)
+![Screenshot of MC Equity](https://raw.githubusercontent.com/sharavsambuu/synthetic-prices/main/pictures/mc_equity_03.png)
