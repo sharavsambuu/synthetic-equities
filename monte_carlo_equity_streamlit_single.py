@@ -48,16 +48,21 @@ def simulate_equity_mc(df, num_simulations, initial_cash, ruining_threshold):
     stats_df['Max Drawdown' ] = [qs.stats.max_drawdown (df_['pct_change']) for df_ in df_list]
 
 
-    max_drawdown           = round(stats_df['Max Drawdown'].min()*100, 0)
-    mean_sharpe_ratio      = round(stats_df['Sharpe Ratio'].mean(), 0)
-    mean_equity            = round(stats_df['Equity'      ].mean(), 0)
+    max_drawdown           = round(stats_df['Max Drawdown' ].min()*100, 0)
+    mean_drawdown          = round(stats_df['Max Drawdown' ].mean()*100, 0)
+    mean_sharpe_ratio      = round(stats_df['Sharpe Ratio' ].mean(), 0)
+    mean_equity            = round(stats_df['Equity'       ].mean(), 0)
+    mean_profit_factor     = round(stats_df['Profit Factor'].mean(), 1)
     ruined_simulations     = len(stats_df[stats_df['Max Drawdown']<=ruining_threshold])
     probability_of_ruining = round(ruined_simulations/num_simulations*100.0, 0)
+
     st.text(f"""
     Probability of ruining : {probability_of_ruining}%
+    Mean Drawdown          : {mean_drawdown}%
     Maximum Drawdown       : {max_drawdown}%
     Mean Sharpe Ratio      : {mean_sharpe_ratio}
     Mean Equity            : {mean_equity}$
+    Mean Profit Factor     : {mean_profit_factor}
     """)
 
     st.text("Simulation metrics ")
