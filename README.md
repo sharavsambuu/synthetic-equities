@@ -61,4 +61,4 @@
 
 # Screenshots
 
-    ![Screenshot of MC Equity](https://raw.githubusercontent.com/sharavsambuu/synthetic-prices/main/pictures/mc_equity_01.png)
+![Screenshot of MC Equity](https://raw.githubusercontent.com/sharavsambuu/synthetic-prices/main/pictures/mc_equity_01.png)
