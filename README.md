@@ -56,6 +56,8 @@
 
 # Resources and references
 
+    - Improving Your Algo Trading By Using Monte Carlo Simulation and Probability Cones
+        https://kjtradingsystems.com/monte-carlo-probability-cones.html 
     - How to detect when a strategy is failing - Kevin Davey, Better System Trader
         https://www.youtube.com/watch?v=_dMbZfALIAQ
     - https://github.com/ydataai/ydata-synthetic
