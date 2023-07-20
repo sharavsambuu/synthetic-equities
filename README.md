@@ -6,11 +6,10 @@
 
 # Todos
 
+    DONE Define drawdown percentage to be considered as ruined
+    DONE Generate Monte Carlo paths and calculate probability of risk of ruining
+
     Generate 1 and 2 sigma probability cones for some confidence threshold
-
-    Define drawdown percentage to be considered as ruined
-
-    Generate Monte Carlo paths and calculate probability of risk of ruining
 
 
 

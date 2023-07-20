@@ -18,7 +18,7 @@ def mc_equity(param):
     return returns
 
 
-def simulate_equity_mc(df, num_simulations, initial_cash):
+def simulate_equity_mc(df, num_simulations, initial_cash, ruining_threshold):
     params = [df['pct_change'].values.astype(float) for _ in range(0, num_simulations)]
     result_list = []
     for param in params:
@@ -46,6 +46,11 @@ def simulate_equity_mc(df, num_simulations, initial_cash):
     stats_df['Sharpe Ratio' ] = [qs.stats.sharpe       (df_['pct_change']) for df_ in df_list]
     stats_df['Profit Factor'] = [qs.stats.profit_factor(df_['pct_change']) for df_ in df_list]
     stats_df['Max Drawdown' ] = [qs.stats.max_drawdown (df_['pct_change']) for df_ in df_list]
+
+    ruined_simulations     = len(stats_df[stats_df['Max Drawdown']<=ruining_threshold])
+    probability_of_ruining = round(ruined_simulations/num_simulations*100.0, 0)
+    st.text(f"Probability of ruining : {probability_of_ruining}%")
+
     st.dataframe(stats_df)
 
     pass
@@ -84,11 +89,13 @@ def generate_equity(start_date, end_date, num_trades, initial_cash):
     stats_df['Max Drawdown' ] = [max_drawdown ]
     st.dataframe(stats_df)
 
-    col11, _, _ = st.columns(3)
+    col11, col12, _ = st.columns(3)
     with col11:
-        num_simulations = st.number_input("N Simulations", min_value=10, step=5, value=50)
+        num_simulations = st.number_input("N Simulations", min_value=10, step=5, value=90)
+    with col12:
+        ruining_threshold = st.number_input("Ruin drawdown threshold", min_value=-1.0, step=0.01, value=-0.3)
 
-    simulate_equity_mc(df, num_simulations, initial_cash)
+    simulate_equity_mc(df, num_simulations, initial_cash, ruining_threshold)
 
 
 
