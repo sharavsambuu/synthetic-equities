@@ -6,6 +6,14 @@
 
 # Todos
 
+    Generate 1 and 2 sigma probability cones for some confidence threshold
+
+    Define drawdown percentage to be considered as ruined
+
+    Generate Monte Carlo paths and calculate probability of risk of ruining
+
+
+
     Implement Geometric Brownian Motion as baseline, 30minute timeframe from 1minute intrady 
 
     Implement Stochastic Volatility Models to tackle one of the shortcomings of GBM, allows
