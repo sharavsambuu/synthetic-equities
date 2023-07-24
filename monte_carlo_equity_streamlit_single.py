@@ -359,8 +359,9 @@ def simulate_equity_mc(df, num_simulations, initial_cash, ruining_threshold):
     stats_df['Profit Factor'            ] = [qs.stats.profit_factor(df_['pct_change']) for df_ in df_list]
     stats_df['Max Drawdown'             ] = [qs.stats.max_drawdown (df_['pct_change']) for df_ in df_list]
 
-    max_drawdown           = round(stats_df['Max Drawdown' ].min()*100, 0)
-    mean_drawdown          = round(stats_df['Max Drawdown' ].mean()*100, 0)
+    max_drawdown           = round(stats_df['Max Drawdown' ].min()*100, 1)
+    mean_drawdown          = round(stats_df['Max Drawdown' ].mean()*100, 1)
+    median_drawdown        = round(stats_df['Max Drawdown' ].median()*100, 1)
     mean_sharpe_ratio      = round(stats_df['Sharpe Ratio' ].mean(), 0)
     mean_equity            = round(stats_df['Equity'       ].mean(), 0)
     mean_profit_factor     = round(stats_df['Profit Factor'].mean(), 1)
@@ -375,6 +376,7 @@ def simulate_equity_mc(df, num_simulations, initial_cash, ruining_threshold):
     st.markdown(f"{is_prob_ruining_ok}[Probability of ruining &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : {probability_of_ruining}% ]")
     st.markdown(f"{is_dsr_ok         }[Deflated Sharpe Ratio  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : {round(dsr,2)}]")
     st.text(f"Mean Drawdown        : {mean_drawdown}%")
+    st.text(f"Median Drawdown      : {median_drawdown}%")
     st.text(f"Maximum Drawdown     : {max_drawdown}%")
     st.text(f"Mean Sharpe Ratio    : {mean_sharpe_ratio}")
     st.text(f"Mean Equity          : {mean_equity}$")
