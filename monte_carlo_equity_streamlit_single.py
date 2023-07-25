@@ -389,12 +389,14 @@ def simulate_equity_mc(df, num_simulations, initial_cash, ruining_threshold):
     #st.dataframe(moments(returns_df))
 
 
+    #sim_df[sim_cols].
+
     pass
 
 
 def generate_equity(start_date, end_date, num_trades, initial_cash):
     trade_dates = pd.to_datetime(np.sort(np.random.choice(pd.date_range(start=start_date, end=end_date, periods=num_trades + 1), num_trades, replace=False)))
-    percentage_changes = np.random.uniform(-0.043, 0.045, num_trades).astype(float)
+    percentage_changes = np.random.uniform(-0.032, 0.034, num_trades).astype(float)
     df = pd.DataFrame({
         'datetime'  : trade_dates,
         'pct_change': percentage_changes,
@@ -436,21 +438,18 @@ def generate_equity(start_date, end_date, num_trades, initial_cash):
     simulate_equity_mc(df, num_simulations, initial_cash, ruining_threshold)
 
 
-
 def main():
     st.markdown("### Monte Carlo Simulation of Equity Curve")
 
-    col01, col02, col03, col04 = st.columns(4)
+    col01, col02, col03 = st.columns(3)
     with col01:
         start_date = st.date_input('Start Date', min_value=None, max_value=None, key=None)
     with col02:
-        period_years = st.number_input('Years', min_value=1, step=1, value=1)
+        num_trades = st.number_input('Number of Trades', min_value=10, step=10, value=300)
     with col03:
-        num_trades = st.number_input('Number of Trades', min_value=10, step=10, value=150)
-    with col04:
         initial_cash = st.number_input("Initial cash $", min_value=1000, step=100, value=10000)
 
-    end_date = (start_date + timedelta(days=period_years*365)) if start_date else None
+    end_date = (start_date + timedelta(hours=num_trades)) if start_date else None
     st.text(f'End Date: {end_date.strftime("%Y-%m-%d") if end_date else ""}')
 
     generate_equity(start_date, end_date, num_trades, initial_cash)
