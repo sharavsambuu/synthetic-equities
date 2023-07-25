@@ -320,19 +320,19 @@ def mc_equity(param):
     return returns
 
 
-def simulate_equity_mc(df, num_simulations, initial_cash, ruining_threshold):
+def simulate_equity_mc(df, num_simulations, initial_cash, ruining_threshold, end_date, num_trades):
     params = [df['pct_change'].values.astype(float) for _ in range(0, num_simulations)]
-    result_list = []
+    mc_result_list = []
     for param in params:
         result = mc_equity(param)
-        result_list.append(result)
+        mc_result_list.append(result)
 
     sim_df = df.copy()
 
     df_list = []
-    for idx in range(0, len(result_list)):
+    for idx in range(0, len(mc_result_list)):
         temp_df = pd.DataFrame(index=df.index)
-        temp_df['pct_change'] = result_list[idx]
+        temp_df['pct_change'] = mc_result_list[idx]
         temp_df['cash'      ] = (1+temp_df['pct_change']).cumprod()*initial_cash
         sim_df[f"cash{idx}" ] = temp_df['cash']
         sim_df[f"path{idx}" ] = temp_df['pct_change']
@@ -342,6 +342,7 @@ def simulate_equity_mc(df, num_simulations, initial_cash, ruining_threshold):
     fig, ax = plt.subplots()
     for col_name in sim_cols:
         ax.plot(sim_df[col_name])
+    fig.autofmt_xdate()
     st.pyplot(fig)
 
     # About to calculate PSR and DSR
@@ -371,7 +372,7 @@ def simulate_equity_mc(df, num_simulations, initial_cash, ruining_threshold):
     is_prob_ruining_ok = ":green" if probability_of_ruining<=1.0 else ":red"
     is_dsr_ok          = ":green" if dsr>=0.95 else ":red"
 
-    st.markdown(f"###### If strategy is good Probability of Ruinning and Deflated Sharpe Ratio both should be green.")
+    st.markdown(f"###### If strategy is good, Probability of Ruinning and Deflated Sharpe Ratio are both should be green.")
 
     st.markdown(f"{is_prob_ruining_ok}[Probability of ruining &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : {probability_of_ruining}% ]")
     st.markdown(f"{is_dsr_ok         }[Deflated Sharpe Ratio  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : {round(dsr,2)}]")
@@ -389,7 +390,24 @@ def simulate_equity_mc(df, num_simulations, initial_cash, ruining_threshold):
     #st.dataframe(moments(returns_df))
 
 
-    #sim_df[sim_cols].
+    # Trying to render confidence intervals with std1 and std2
+    st.markdown("##### Confidence interval with 1 std and 2 std")
+
+    equity_df = pd.DataFrame()
+    equity_df['cash'] = (1+df['pct_change']).cumprod()*initial_cash
+    cash_diff = equity_df.iloc[-1]['cash']-equity_df.iloc[0]['cash']
+
+    sim_cash_df = sim_df[sim_cols].copy()
+    sim_cash_df.index = pd.date_range(equity_df.index[-1], periods=len(sim_cash_df), freq='D')
+    for col_name in sim_cols:
+        sim_cash_df[col_name] += cash_diff
+
+    fig, ax = plt.subplots()
+    ax.plot(equity_df['cash'], color='b', label='Original Equity')
+    for col_name in sim_cols:
+        ax.plot(sim_cash_df[col_name], color='gray', alpha=0.1)
+    fig.autofmt_xdate()
+    st.pyplot(fig)
 
     pass
 
@@ -414,6 +432,7 @@ def generate_equity(start_date, end_date, num_trades, initial_cash):
     fig, ax = plt.subplots()
     ax.plot(df['cash'])
     ax.scatter(higher_high_df.index, higher_high_df['cash'], color='green', s=higher_high_df['s'])
+    fig.autofmt_xdate()
     st.pyplot(fig)
 
     sharpe_ratio  = qs.stats.sharpe       (df['pct_change'])
@@ -433,9 +452,9 @@ def generate_equity(start_date, end_date, num_trades, initial_cash):
     with col11:
         num_simulations = st.number_input("N Simulations", min_value=10, step=5, value=90)
     with col12:
-        ruining_threshold = st.number_input("Ruin drawdown threshold", min_value=-1.0, step=0.01, value=-0.5)
+        ruining_threshold = st.number_input("Ruin drawdown threshold", min_value=-1.0, step=0.01, value=-0.35)
 
-    simulate_equity_mc(df, num_simulations, initial_cash, ruining_threshold)
+    simulate_equity_mc(df, num_simulations, initial_cash, ruining_threshold, end_date, num_trades)
 
 
 def main():
@@ -449,7 +468,7 @@ def main():
     with col03:
         initial_cash = st.number_input("Initial cash $", min_value=1000, step=100, value=10000)
 
-    end_date = (start_date + timedelta(hours=num_trades)) if start_date else None
+    end_date = (start_date + timedelta(days=num_trades)) if start_date else None
     st.text(f'End Date: {end_date.strftime("%Y-%m-%d") if end_date else ""}')
 
     generate_equity(start_date, end_date, num_trades, initial_cash)
