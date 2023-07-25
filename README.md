@@ -61,20 +61,34 @@
 
     - Improving Your Algo Trading By Using Monte Carlo Simulation and Probability Cones
         https://kjtradingsystems.com/monte-carlo-probability-cones.html 
+
     - How to detect when a strategy is failing - Kevin Davey, Better System Trader
         https://www.youtube.com/watch?v=_dMbZfALIAQ
+
+    - Probability cones related references
+        How to use Probability Cones indicator in TradingView
+        https://www.youtube.com/watch?v=sKTjxkYA3UU
+        https://www.tradingview.com/script/Cp49eQt5-Probability-Cones/
+        https://www.bausbenchmarks.com/indicators/probability-cones
+
     - Probabilistic Sharpe Ratio
         https://quantdare.com/probabilistic-sharpe-ratio/
         https://portfoliooptimizer.io/blog/the-probabilistic-sharpe-ratio-hypothesis-testing-and-minimum-track-record-length-for-the-difference-of-sharpe-ratios/
         https://stockviz.biz/2020/05/23/probabilistic-sharpe-ratio/
         https://www.youtube.com/watch?v=yKPNjru2Ry4
+
     - Deflated Sharpe Ratio
         https://quantdare.com/deflated-sharpe-ratio-how-to-avoid-been-fooled-by-randomness/
         https://github.com/rubenbriones/Probabilistic-Sharpe-Ratio
+
     - https://github.com/ydataai/ydata-synthetic
+
     - https://www.investopedia.com/articles/07/montecarlo.asp
+
     - https://towardsdatascience.com/simulating-stock-prices-in-python-using-geometric-brownian-motion-8dfd6e8c6b18 
+
     - https://stackoverflow.com/questions/53386933/how-to-solve-fit-a-geometric-brownian-motion-process-in-python
+
     - https://colab.research.google.com/github/ydataai/ydata-synthetic/blob/master/examples/timeseries/TimeGAN_Synthetic_stock_data.ipynb
 
 
