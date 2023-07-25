@@ -391,7 +391,8 @@ def simulate_equity_mc(df, num_simulations, initial_cash, ruining_threshold, end
 
 
     # Trying to render confidence intervals with std1 and std2
-    st.markdown("##### Confidence interval with 1 std and 2 std")
+    st.markdown("##### Confidence interval with 1 and 2 standard deviations")
+    st.text("Confidence interval is useful for tracking if strategy is failing or not")
 
     equity_df = pd.DataFrame()
     equity_df['cash'] = (1+df['pct_change']).cumprod()*initial_cash
@@ -402,10 +403,22 @@ def simulate_equity_mc(df, num_simulations, initial_cash, ruining_threshold, end
     for col_name in sim_cols:
         sim_cash_df[col_name] += cash_diff
 
+    mean_simulated_equities = np.mean(sim_cash_df.values, axis=1)
+    std_simulated_equities  = np.std (sim_cash_df.values, axis=1)
+    sim_cash_df['mean_sim_equity' ] = mean_simulated_equities
+    sim_cash_df['upper_bound_std1'] = mean_simulated_equities + 1*std_simulated_equities
+    sim_cash_df['lower_bound_std1'] = mean_simulated_equities - 1*std_simulated_equities
+    sim_cash_df['upper_bound_std2'] = mean_simulated_equities + 2*std_simulated_equities
+    sim_cash_df['lower_bound_std2'] = mean_simulated_equities - 2*std_simulated_equities
+
     fig, ax = plt.subplots()
     ax.plot(equity_df['cash'], color='b', label='Original Equity')
     for col_name in sim_cols:
-        ax.plot(sim_cash_df[col_name], color='gray', alpha=0.1)
+        ax.plot(sim_cash_df[col_name], color='gray', alpha=0.3)
+    ax.plot(sim_cash_df.index, sim_cash_df['mean_sim_equity'], label='Mean Simulated Equities', color='black')
+    ax.fill_between(sim_cash_df.index, sim_cash_df['lower_bound_std2'], sim_cash_df['upper_bound_std2'], color='red'  , alpha=0.55, label='2 std deviation confidence Interval')
+    ax.fill_between(sim_cash_df.index, sim_cash_df['lower_bound_std1'], sim_cash_df['upper_bound_std1'], color='green', alpha=0.7 , label='1 std deviation confidence Interval')
+
     fig.autofmt_xdate()
     st.pyplot(fig)
 
