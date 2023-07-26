@@ -1,6 +1,6 @@
 setuptools
 protobuf
-ydata-synthetic
+#ydata-synthetic
 jupyter
 scikit-learn
 python-binance

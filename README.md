@@ -53,6 +53,9 @@
 
 # Resources and references
 
+    - Andrea Unger podcast
+        https://open.spotify.com/episode/5EoE2rPlJs8pIxsnEh1BRb
+
     - Improving Your Algo Trading By Using Monte Carlo Simulation and Probability Cones
         https://kjtradingsystems.com/monte-carlo-probability-cones.html 
 
