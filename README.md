@@ -32,6 +32,9 @@
 
 # Resources and references
 
+    - How do traders use Monte-Carlo simulations
+        https://www.youtube.com/watch?v=yihYxhYp-DM
+    
     - Andrea Unger podcast
         https://open.spotify.com/episode/5EoE2rPlJs8pIxsnEh1BRb
 
